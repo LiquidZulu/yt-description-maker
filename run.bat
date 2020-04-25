@@ -1,1 +1,1 @@
-start "" /max "./index.py"
+start "" /max "./dist/index/index.exe"
