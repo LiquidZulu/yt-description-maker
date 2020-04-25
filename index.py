@@ -1,22 +1,4 @@
-ENV = {
-
-    'title': {
-        'music':  '\n\n\n-- Music (in order of appearance --\n',
-        'people': '\n\n\n-- People (in order of appearance --\n'
-    },
-
-    'people': [
-        'Scrappy - https://www.youtube.com/channel/UCZhKcWfYk3RVdYfsoJ7JpCA',
-        'Campbell - https://www.youtube.com/channel/UCJNXGXyttBzWWnvqlgyP25g',
-        'EternalSalt - https://www.twitch.tv/EternalSalt',
-        'Joe - "ah i dont need no links, dw bout it"',
-        'Daniel - https://www.youtube.com/channel/UC3kEl0PpjrfsYHIgvxD6yZA',
-        'Miller - IDK'
-    ],
-
-    'socials': '\n\n-- Social media links --\n\nhttp://liquidzulu.xyz\nhttps://discord.gg/VY4XYrR\nhttps://github.com/LiquidZulu/\nhttps://soundcloud.com/liquidzulu\nhttps://gab.com/LiquidZulu\nhttps://twitter.com/LiquidZulu'
-}
-
+import json
 from colorama import init
 from colorama import Fore, Back, Style
 init()
@@ -51,71 +33,80 @@ $$\     $$\ $$$$$$$$\       $$$$$$$\  $$$$$$$$\  $$$$$$\   $$$$$$\  $$$$$$$\  $$
     
 {Fore.GREEN}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n\n{Style.RESET_ALL}''')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%{Style.RESET_ALL}\n\n\n''')
 
 def main():
 
-    people = []
-    music  = []
-    def person():
-        time      = input('Time:\n')
-        thePerson = ENV['people'][int(input('Who is it?\n\t0 => Scrappy\n\t1 => Campbell\n\t2 => EternalSalt\n\t3 => Joe\n\t4 => Daniel\n\t5 => Miller\n\n'))]
-        people.append(f'{time} - {thePerson}')
-        return True
-    
-    def song():
-        time    = input('Time:\n')
-        theSong = input('Song:\n')
-        music.append(f'{time} - {theSong}')
-        return True
-    
-    def kill():
+    with open('ENV.json') as ENV_RAW:
 
-        desc     = ''
+        ENV    = json.loads(ENV_RAW.read())
+        people = []
+        music  = []
 
-        if len(people) > 0:
+        def person():
+            time       = input('Time:\n')
+            peopleList = ''
 
-            desc += ENV['title']['people']
+            for i in range(len(ENV['people'])):
+                peopleList += f'''\n\t{i} => {ENV['people'][i][0]}'''
 
-            for i in people:
-                desc += f'\n{i}'
-                    
-        if len(music) > 0:
-
-            desc += ENV['title']['music']
-
-            for i in music:
-                desc += f'\n{i}'
-
-        print(desc + ENV['socials'])
-        return False
-
-    switch = {
-        0: person,
-        1: song,
-        2: kill
-    }
-
-    cont = True
-    while cont:
-
-        try:
-            PERSON_OR_SONG_INT = int(input('Person or song?\n\t0 => person\n\t1 => song\n\t2 => stop program\n\n'))
-            cont = switch[PERSON_OR_SONG_INT]()
+            thePerson  = ENV['people'][int(input(f'Who is it?{peopleList}\n\n'))]
+            people.append(f'{time} - {thePerson}')
+            return True
         
-        except KeyboardInterrupt:
-            cont = kill()
+        def song():
+            time    = input('Time:\n')
+            theSong = input('Song:\n')
+            music.append(f'{time} - {theSong}')
+            return True
         
-        except KeyError:
-            print(
-                '''
-                *************************
-                *************************
-                ***** INVALID INDEX *****
-                *************************
-                *************************
-                '''
-            )
+        def kill():
+
+            desc     = ''
+
+            if len(people) > 0:
+
+                desc += ENV['title']['people']
+
+                for i in people:
+                    desc += f'\n{i}'
+                        
+            if len(music) > 0:
+
+                desc += ENV['title']['music']
+
+                for i in music:
+                    desc += f'\n{i}'
+
+            print(desc + ENV['socials'])
+            return False
+
+        switch = {
+            0: person,
+            1: song,
+            2: kill
+        }
+
+        cont = True
+        while cont:
+
+            try:
+                PERSON_OR_SONG_INT = int(input('Person or song?\n\t0 => person\n\t1 => song\n\t2 => stop program\n\n'))
+                cont = switch[PERSON_OR_SONG_INT]()
+            
+            except KeyboardInterrupt:
+                cont = kill()
+            
+            except KeyError:
+                print(
+                    '''
+                    *************************
+                    *************************
+                    ***** INVALID INDEX *****
+                    *************************
+                    *************************
+                    '''
+                )
         
 
 main()
