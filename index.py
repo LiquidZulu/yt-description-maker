@@ -79,6 +79,10 @@ def main():
                     desc += f'\n{i}'
 
             print(desc + ENV['socials'])
+
+            while True:
+                placeholder = input('\n\nPress enter to kill program...')
+                break
             return False
 
         switch = {
@@ -95,6 +99,9 @@ def main():
                 cont = switch[PERSON_OR_SONG_INT]()
             
             except KeyboardInterrupt:
+                cont = kill()
+            
+            except ValueError:
                 cont = kill()
             
             except KeyError:
