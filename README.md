@@ -6,7 +6,7 @@ yt-description-maker is a Python 3 CLI that is used to make YouTube Descriptions
 * [Compiling](#compiling)
     * [py2exe](#py2exe)
     * [For Windows](#for-windows)
-    * [For other OS's](#for-other-os's)
+    * [For other OS's](#for-other-oss)
 
 
 # Customisation
