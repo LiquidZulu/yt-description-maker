@@ -10,7 +10,7 @@ yt-description-maker is a Python 3 CLI that is used to make YouTube Descriptions
 
 
 # Customisation
-For customisation edit ENV.py making sure to follow the schema.
+For customisation edit ENV.py making sure to follow the schema. It is recommended you keep long default lists in `DEFAULTS.py` as I have done with example songs.
 
 Note: the ENV is [*ordinal*](https://en.wikipedia.org/wiki/Ordinal_data), each section will be printed in the order it comes up in `ENV`
 
