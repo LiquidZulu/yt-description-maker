@@ -1,7 +1,11 @@
-import json
+from ENV import *
 from colorama import init
 from colorama import Fore, Back, Style
+from maximise_console import *
+
 init()
+maximize_console()
+
 
 print(f'''{Fore.GREEN}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -37,83 +41,116 @@ $$\     $$\ $$$$$$$$\       $$$$$$$\  $$$$$$$$\  $$$$$$\   $$$$$$\  $$$$$$$\  $$
 
 def main():
 
-    with open('ENV.json') as ENV_RAW:
+    cont   = True
+    cats   = 0
+    catmap = []
+    catarr = [[] for x in range(len(ENV))]
+    _input = 'What category do you want to add to?\n'
+    
 
-        ENV    = json.loads(ENV_RAW.read())
-        people = []
-        music  = []
+    def process(x):
 
-        def person():
-            time       = input('Time:\n')
-            peopleList = ''
+        if x == cats:
+            return kill()
 
-            for i in range(len(ENV['people'])):
-                peopleList += f'''\n\t{i} => {ENV['people'][i][0]}'''
+        if (ENV[catmap[x]][TYPE] & FORMATTED) | (ENV[catmap[x]][TYPE] ^ FORMATTED) == FORMATTED:
+            catarr[catmap[x]].append([
+                input(ENV[catmap[x]][TIME_Q]),
+                input(ENV[catmap[x]][NAME_Q])
+            ])
 
-            thePerson  = ENV['people'][int(input(f'Who is it?{peopleList}\n\n'))]
-            people.append(f'{time} - {thePerson}')
-            return True
+        elif ENV[catmap[x]][TYPE] & DEFAULTS:
+
+            defaultsList = ''
+            n_defs       = len(ENV[catmap[x]][DEFLIST]) - 1
+
+            for i in range(n_defs - 1):
+                defaultsList += f'''\t{i} => {ENV[catmap[x]][DEFLIST][i+1][DEFLIST_TITLE]}\n'''
+
+            defaultsList += f'\t{n_defs - 1} => {Style.DIM}Custom...{Style.RESET_ALL}'
+            _index = [input(ENV[catmap[x]][TIME_Q])]
+            option = int(input(f'{ENV[catmap[x]][DEFLIST][DEFLIST_TITLE]}{defaultsList}\n\n')) + DEFLIST_TITLE + 1
+
+            if option < n_defs - 1:
+                for d in ENV[catmap[x]][DEFLIST][option]:
+                    _index.append(d)
+            else:
+                for d in input(ENV[catmap[x]][DEFLIST][n_defs]).split(CUSTOM_DEFAULT_DELIMITER):
+                    _index.append(d)
+
+            catarr[catmap[x]].append(_index)
         
-        def song():
-            time    = input('Time:\n')
-            theSong = input('Song:\n')
-            music.append(f'{time} - {theSong}')
-            return True
-        
-        def kill():
+        return True
+    
 
-            desc     = ''
+    def kill():
 
-            if len(people) > 0:
+        desc = ''
 
-                desc += ENV['title']['people']
+        for i in range(len(catarr)):
 
-                for i in people:
-                    desc += f'\n{i}'
+            if ENV[i][TYPE] == PLAINTEXT:
+                desc += ENV[i][PLAINTEXT_TEXT]
+            
+            elif ENV[i][TYPE] & FORMATTED and catarr[i] != []:
+
+                desc += ENV[i][TITLE]
+
+                for j in range(len(catarr[i])):
+
+                    for k in range(len(catarr[i][j])):
+
+                        if k < len(catarr[i][j]) - 1:
+                            desc += f'{catarr[i][j][k]} {DESCRIPTION_DELIMITER} '
+                        else:
+                            desc += f'{catarr[i][j][k]}'
                         
-            if len(music) > 0:
+                            if j < len(catarr[i]) - 1:
+                                desc += '\n'
+                    
 
-                desc += ENV['title']['music']
+        print(desc)
 
-                for i in music:
-                    desc += f'\n{i}'
+        while True:
+            input('\n\nPress enter to kill program...')
+            break
+        return False
 
-            print(desc + ENV['socials'])
 
-            while True:
-                placeholder = input('\n\nPress enter to kill program...')
-                break
-            return False
+    for i in range(len(ENV)):
+        if ENV[i][TYPE] & FORMATTED:
+            catmap.append(i)
+            _input += f'\n\t{cats} => {ENV[i][NICK]}'
+            cats += 1
+    
+    _input += f'\n\t{cats} => stop program\n'
 
-        switch = {
-            0: person,
-            1: song,
-            2: kill
-        }
 
-        cont = True
-        while cont:
+    while cont:
 
-            try:
-                PERSON_OR_SONG_INT = int(input('Person or song?\n\t0 => person\n\t1 => song\n\t2 => stop program\n\n'))
-                cont = switch[PERSON_OR_SONG_INT]()
-            
-            except KeyboardInterrupt:
-                cont = kill()
-            
-            except ValueError:
-                cont = kill()
-            
-            except KeyError:
-                print(
-                    '''
-                    *************************
-                    *************************
-                    ***** INVALID INDEX *****
-                    *************************
-                    *************************
-                    '''
+        try:
+            cont = process(
+                int(
+                    input(_input)
                 )
+            )
+        
+        except KeyboardInterrupt:
+            cont = kill()
+        
+        except ValueError:
+            cont = kill()
+        
+        except KeyError:
+            print(
+                '''
+                *************************
+                *************************
+                ***** INVALID INDEX *****
+                *************************
+                *************************
+                '''
+            )
         
 
 main()

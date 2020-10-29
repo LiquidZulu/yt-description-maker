@@ -1,1 +1,1 @@
-start "" /max "./dist/index/index.exe"
+start "" /max "./dist/index.exe"
