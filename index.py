@@ -48,7 +48,7 @@ def main():
     _input = 'What category do you want to add to?\n'
     
 
-    def process(x):
+    def process(x: int):
 
         if x == cats:
             return kill()

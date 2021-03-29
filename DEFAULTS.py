@@ -210,7 +210,7 @@ URL_KEYS = {
 }
 
 
-def get_song(a, s):
+def get_song(a: int or str, s: str):
 
     if a == UNKNOWN_ARTIST:
         return [
@@ -222,3 +222,14 @@ def get_song(a, s):
         f'{a} {ARTIST_SONG_DELIMITER} {s}', 
         URL_KEYS[a][s]
     ]
+
+
+def get_songs(*args):
+    
+    songs = [args[0]]
+
+    for song in args[1]:
+        songs.append(get_song(song[0], song[1]))
+    
+    songs.append(args[2])
+    return songs
